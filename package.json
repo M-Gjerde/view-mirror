@@ -9,8 +9,8 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "electron-builder install-app-deps",
-    "build": "electron-builder --mac --windows --linux",
-    "release": "electron-builder --mac --windows --linux --publish always"
+    "build": "electron-builder --windows --linux",
+    "release": "electron-builder --windows --linux --publish always"
   },
   "devDependencies": {
     "electron": "^18.2.4",
