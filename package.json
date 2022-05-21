@@ -1,6 +1,6 @@
 {
   "name": "view-mirror",
-  "version": "1.2.3",
+  "version": "1.2.6",
   "description": "application running on a smart mirror",
   "main": "main.js",
   "author": "Magnus K. Gjerde",
@@ -8,9 +8,9 @@
   "private": false,
   "scripts": {
     "start": "electron .",
-    "postinstall": "electron-builder install-app-deps",
-    "build": "electron-builder --windows --linux",
-    "release": "electron-builder --windows --linux --publish always"
+    "postinstall": "",
+    "build": "",
+    "release": ""
   },
   "devDependencies": {
     "electron": "^18.2.4",
