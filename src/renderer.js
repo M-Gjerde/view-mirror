@@ -1,36 +1,18 @@
-//const PageLoader = require('./PageLoader');
-import PageLoader from "./PageLoader.js"
-
-class Application {
-    constructor() {
-
-    }
-
-    initialize(){
-        this.PageLoader = new PageLoader();
-
-        console.log("Initialized");
-        this.running = true;
-    }
-
-    update(){
+console.log("Initialized");
 
 
-    }
+const setButton = document.getElementById('btn')
+const titleInput = document.getElementById('title')
+setButton.addEventListener('click', () => {
+    const title = titleInput.value
+    window.electronAPI.setTitle(title)
+});
 
-    cleanUp(){
+const counter = document.getElementById('counter')
 
-    }
-}
-
-let app = new Application()
-app.initialize();
-
-while (app.running){
-    app.update();
-
-}
-
-app.cleanUp();
-
-
+window.electronAPI.handleCounter((event, value) => {
+    const oldValue = Number(counter.innerText)
+    const newValue = oldValue + value
+    counter.innerText = newValue
+    event.sender.send('counter-value', newValue)
+})

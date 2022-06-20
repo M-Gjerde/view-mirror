@@ -1,13 +1,36 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const Application = require("./Application");
+const { Worker, isMainThread } = require('node:worker_threads');
 
-//yes
+if (isMainThread) {
+    // This re-loads the current file inside a Worker instance.
+    const worker = new Worker(__filename);
+
+    worker.on("message", incoming => {
+        console.log({incoming})
+    });
+
+    worker.on("error", code => new Error(`Worker error with exit code ${code}`));
+    worker.on("exit", code =>
+        console.log(`Worker stopped with exit code ${code}`)
+    );
+
+    setTimeout(() => worker.postMessage("stop"), 30000);
+
+} else {
+    application = new Application();
+    application.initialize();
+    return;
+}
+
+/** INITIALIZE WINDOW AND RENDERER **/
 const createWindow = () => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    const win = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
@@ -16,10 +39,24 @@ const createWindow = () => {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile('src/index.html')
+    win.loadFile('src/index.html')
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    win.webContents.openDevTools()
+
+    win.webContents.on('before-input-event', (event, input) => {
+        if (input.key.toLowerCase() === 'q') {
+            win.close();
+        }
+    })
+
+    ipcMain.on('set-title', (event, title) => {
+        const webContents = event.sender
+        const win = BrowserWindow.fromWebContents(webContents)
+        win.setTitle(title)
+    })
+
+    win.webContents.send('update-counter', 2);
 }
 
 // This method will be called when Electron has finished
@@ -35,8 +72,7 @@ app.whenReady().then(() => {
 })
 
 app.on("ready" , () =>{
-    console.log("App isready")
-    document.createElement("p").innerHTML = "HEllo World";
+    console.log("App is ready");
 })
 
 // Change
@@ -47,5 +83,5 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+
+/** INITIALIZE BACKEND **/

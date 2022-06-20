@@ -3,9 +3,12 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 window.addEventListener('DOMContentLoaded', () => {
+    console.log("DOMContentLoaded")
     const replaceText = (selector, text) => {
-        const element = document.getElementById(selector)
-        if (element) element.innerText = text
+        const element = document.createElement("p")
+        element.innerText = selector + ": " + text;
+
+        document.body.append(element);
     }
 
     for (const dependency of ['chrome', 'node', 'electron']) {
@@ -13,3 +16,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+const { contextBridge, ipcRenderer } = require('electron')
+
+contextBridge.exposeInMainWorld('electronAPI', {
+    setTitle: (title) => ipcRenderer.send('set-title', title),
+    handleCounter: (callback) => ipcRenderer.on('update-counter', callback)
+})

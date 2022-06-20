@@ -690,7 +690,7 @@ ejs@^3.1.6:
   dependencies:
     jake "^10.8.5"
 
-electron-builder@^23.0.3:
+electron-builder@23.0.3:
   version "23.0.3"
   resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-23.0.3.tgz#16264a0d8e3d40da1467bcc8ef7917538b54a3bc"
   integrity sha512-0lnTsljAgcOMuIiOjPcoFf+WxOOe/O04hZPgIvvUBXIbz3kolbNu0Xdch1f5WuQ40NdeZI7oqs8Eo395PcuGHQ==
