@@ -1,0 +1,88 @@
+@import url('https://rsms.me/inter/inter.css');
+
+html {
+    font-family: 'Inter', sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+    html {
+        font-family: 'Inter var', sans-serif;
+    }
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+#div-1 {
+}
+
+#div-2 {
+}
+
+#div-3 {
+}
+
+#weatherDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+
+#currentWeatherDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+.txtCurrentWeather {
+    font-size: 2em;
+}
+
+#divCurrentWeatherDesc {
+    padding-left: 10px;
+}
+
+.txtCurrentWeatherDescription {
+    margin-top: -35px;
+}
+
+#divCurrentWeatherStats {
+    border-right: 1px solid #979797;
+    border-left: 1px solid #979797;
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+
+.divCurrentWeatherRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.divWeatherTodayElement {
+    margin-top: -20px;
+    padding-right: 40px;
+    padding-left: 40px;
+}
+
+.weatherTodayStats {
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.weatherTodayDesc {
+    text-align: center;
+    margin-top: -30px;
+    font-size: 0.8em;
+
+}
+
+#divCurrentTime {
+    font-size: 3em;
+    padding: 30px;
+}

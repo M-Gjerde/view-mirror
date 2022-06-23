@@ -6,6 +6,7 @@ const path = require('path')
 const Application = require("./Application");
 const { Worker, isMainThread } = require('node:worker_threads');
 
+/** INITIALIZE WORKER THREAD FOR BACKEND TASKS **/
 if (isMainThread) {
     // This re-loads the current file inside a Worker instance.
     const worker = new Worker(__filename);
@@ -23,7 +24,7 @@ if (isMainThread) {
 
 } else {
     application = new Application();
-    application.initialize();
+    application.run();
     return;
 }
 
@@ -31,8 +32,8 @@ if (isMainThread) {
 const createWindow = () => {
     // Create the browser window.
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }

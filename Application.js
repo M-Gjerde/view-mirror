@@ -26,7 +26,7 @@ module.exports = class Application {
         setTimeout(interv, wait);
     };
 
-    initialize() {
+    run() {
         // Set up communication
         console.log("initialization");
         parentPort.on("message", message => {
@@ -47,7 +47,7 @@ module.exports = class Application {
     }
 
     update() {
-        parentPort.postMessage("Render loop");
+
 
     }
 
