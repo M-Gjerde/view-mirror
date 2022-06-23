@@ -46,14 +46,23 @@ module.exports = class Application {
         console.log(this.running);
     }
 
-    update() {
+    sendUpdate(dst, msg) {
+        if (dst === "render") {
+            parentPort.postMessage("renderer:" + msg);
+        } else {
+            parentPort.postMessage("electron:" + msg);
+        }
+    }
 
+    update() {
+        this.sendUpdate("render", "weatherUpdateInfo");
+
+        // Gather information from OpenWeather API.
 
     }
 
     cleanUp() {
         parentPort.close();
-
     }
 }
 

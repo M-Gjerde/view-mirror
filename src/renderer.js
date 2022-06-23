@@ -1,24 +1,8 @@
-console.log("Initialized");
-
-
-/*const setButton = document.getElementById('btn')
-const titleInput = document.getElementById('title')
-setButton.addEventListener('click', () => {
-    const title = titleInput.value
-    window.electronAPI.setTitle(title)
-});
-
-const counter = document.getElementById('counter')
-
-window.electronAPI.handleCounter((event, value) => {
-    const oldValue = Number(counter.innerText)
-    const newValue = oldValue + value
-    counter.innerText = newValue
-    event.sender.send('counter-value', newValue)
-})
-*/
 
 /** Create Weather Window **/
+let weatherAndTimeDiv = document.createElement("div");
+weatherAndTimeDiv.className = "weatherAndTimeDiv";
+
 let weatherDiv = document.createElement("div");
 weatherDiv.id = "weatherDiv";
 
@@ -131,7 +115,41 @@ txtCurrentTime.id = "currentTime";
 txtCurrentTime.innerText = "11:32";
 
 divCurrentTime.append(txtCurrentTime);
-
 weatherDiv.append(divCurrentTime);
 
-document.body.append(weatherDiv);
+/** 7 DAY FORECAST **/
+let divForecast = document.createElement("div");
+divForecast.id = "divForecast";
+
+for (let i = 0; i < 7; i++){
+    let divForecastElement = document.createElement("div");
+    divForecastElement.className = "divForecastElement";
+
+    let txtForecastDay = document.createElement("p");
+    txtForecastDay.innerText = "Mon";
+    txtForecastDay.className = "forecastDay";
+
+    let imgForecastDay = document.createElement("img");
+    imgForecastDay.className = "forecastDayImg";
+    imgForecastDay.src = "icons/sunny_clouds.png";
+
+    let txtForecastTemp = document.createElement("p");
+    txtForecastTemp.innerText = "24\u00B0";
+    txtForecastTemp.className = "forecastDay";
+
+    divForecastElement.append(txtForecastDay)
+    divForecastElement.append(imgForecastDay)
+    divForecastElement.append(txtForecastTemp)
+
+    divForecast.append(divForecastElement);
+}
+
+weatherAndTimeDiv.append(weatherDiv);
+weatherAndTimeDiv.append(divForecast);
+
+document.body.append(weatherAndTimeDiv);
+
+
+window.electronAPI.data((event, value) => {
+    console.log(event, value);
+})

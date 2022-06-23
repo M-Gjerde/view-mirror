@@ -7,12 +7,22 @@ const Application = require("./Application");
 const { Worker, isMainThread } = require('node:worker_threads');
 
 /** INITIALIZE WORKER THREAD FOR BACKEND TASKS **/
+let windowHandler = null;
 if (isMainThread) {
     // This re-loads the current file inside a Worker instance.
     const worker = new Worker(__filename);
 
     worker.on("message", incoming => {
-        console.log({incoming})
+        try{
+            let msgArr = incoming.split(":");
+
+            if (msgArr[0] === "renderer" && windowHandler){
+                windowHandler.webContents.send('data', incoming.replace("renderer:", ""));
+            }
+
+        } catch (e){
+            console.log(incoming, e);
+        }
     });
 
     worker.on("error", code => new Error(`Worker error with exit code ${code}`));
@@ -56,8 +66,7 @@ const createWindow = () => {
         const win = BrowserWindow.fromWebContents(webContents)
         win.setTitle(title)
     })
-
-    win.webContents.send('update-counter', 2);
+    windowHandler = win;
 }
 
 // This method will be called when Electron has finished
