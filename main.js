@@ -85,6 +85,9 @@ const createWindow = () => {
     const win = new BrowserWindow({
         width: 1280,
         height: 720,
+        fullscreen: true,
+        autoHideMenuBar: true,
+        disableAutoHideCursor: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -94,7 +97,12 @@ const createWindow = () => {
     win.loadFile('src/index.html')
 
     // Open the DevTools.
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
+
+    win.webContents.on('dom-ready', (event)=> {
+        let css = '* { cursor: none !important; }';
+        win.webContents.insertCSS(css);
+    });
 
     win.webContents.on('before-input-event', (event, input) => {
         if (input.key.toLowerCase() === 'q') {

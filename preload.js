@@ -22,3 +22,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setTitle: (title) => ipcRenderer.send('set-title', title),
     data: (callback) => ipcRenderer.on('data', callback)
 })
+
+

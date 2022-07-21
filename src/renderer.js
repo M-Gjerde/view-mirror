@@ -1,5 +1,6 @@
 import CreateLayout from "./createLayout.js";
 
+
 let layout = new CreateLayout();
 
 
@@ -21,3 +22,4 @@ window.electronAPI.data((event, value) => {
         }
     }
 })
+

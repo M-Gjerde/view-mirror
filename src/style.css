@@ -13,6 +13,8 @@ html {
 body {
     background-color: black;
     color: white;
+    cursor:move;
+
 }
 
 #div-1 {
