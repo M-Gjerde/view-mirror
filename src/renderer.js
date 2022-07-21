@@ -1,14 +1,9 @@
 import CreateLayout from "./createLayout.js";
 
 
-// 2. Trigger this event wherever you wish
-setInterval(function () {
-    console.log("SetMouse");
-    document.dispatchEvent(new Event('mousemove'));
-}, 5000)
 
 //document.dispatchEvent(new Event('mousemove'));
-document.dispatchEvent(new Event('mousemove'));
+document.body.requestPointerLock();
 
 
 let layout = new CreateLayout();
@@ -19,8 +14,6 @@ window.electronAPI.data((event, value) => {
     if (value.split(":").length > 1) {
         let key = value.split("::")[0];
         let msg = value.replace(key + "::", "");
-        document.dispatchEvent(new Event('mousemove'));
-
         switch (key) {
             case "time":
                 layout.setTime(msg);

@@ -7,6 +7,8 @@ const Application = require("./Application");
 const {Worker, isMainThread} = require('node:worker_threads');
 const {transports, createLogger, format} = require('winston');
 const {log} = require("winston");
+
+
 /** INITIALIZE LOGGER **/
 const logger = createLogger({
     level: 'info',
@@ -83,8 +85,6 @@ if (isMainThread) {
 const createWindow = () => {
     // Create the browser window.
     const win = new BrowserWindow({
-        width: 1280,
-        height: 720,
         fullscreen: true,
         autoHideMenuBar: true,
         disableAutoHideCursor: false,
