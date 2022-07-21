@@ -28,3 +28,5 @@ window.electronAPI.data((event, value) => {
     }
 })
 
+
+document.getElementById("weatherDiv").focus();
