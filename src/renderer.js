@@ -1,6 +1,15 @@
 import CreateLayout from "./createLayout.js";
 
 
+// 2. Trigger this event wherever you wish
+setInterval(function () {
+    document.dispatchEvent(new Event('mousemove'));
+
+}, 2000)
+
+document.dispatchEvent(new Event('mousemove'));
+
+
 let layout = new CreateLayout();
 
 
