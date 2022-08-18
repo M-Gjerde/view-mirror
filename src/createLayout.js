@@ -6,6 +6,7 @@ export default class CreateLayout {
     }
 
     setTime(time) {
+        console.log(time);
         this.txtCurrentTime.innerText = time;
     }
 

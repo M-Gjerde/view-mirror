@@ -4,10 +4,14 @@ const axios = require('axios').default;
 const UPDATE_LOOP_INTERVAL_MS = 1000;
 const UPDATE_WEATHER_INTERVAL_MS = 1000 * 60;
 const UPDATE_WEEKLY_WEATHER_INTERVAL_MS = 1000 * 3600;
+const UPDATE_TIME_INTERVAL_MS = 1000 * 30;
 
 module.exports = class Application {
     constructor(logger) {
         this.logger = logger;
+        this.timeTimer = new Date().valueOf();
+        this.weatherTodayTimer = new Date().valueOf();
+        this.weatherWeeklyTimer = new Date().valueOf();
 
         this.weatherInfo = {
             city: "Home",
@@ -44,11 +48,10 @@ module.exports = class Application {
                 if (typeof t === "undefined" || t-- > 0) {
                     setTimeout(interv, w);
                     try {
-                        app.logger.info("Running update on worker");
                         app.update()
                     } catch (e) {
                         t = 0;
-                        app.logger.error(e);
+                        app.logger.error("Update loop error: " + e.toString());
                     }
                 }
             };
@@ -70,13 +73,16 @@ module.exports = class Application {
         });
         parentPort.postMessage({start: workerData, isMainThread});
 
+
+
         // Prepare render loop and set update interval
         this.interval(this.update, UPDATE_LOOP_INTERVAL_MS);
 
-        this.time = new Date().valueOf();
-
         this.dailyWeatherUpdate(true);
         this.weeklyWeatherUpdate(true);
+
+        this.timeUpdate(true);
+
 
         this.running = true;
         this.logger.info("Worker initialized");
@@ -94,9 +100,10 @@ module.exports = class Application {
         // Gather information from OpenWeather API.
         // - Get current weather
         // Make a request for a user with a given ID
-        if (this.time + UPDATE_WEATHER_INTERVAL_MS < new Date().valueOf() || bypass) {
+        if (this.weatherTodayTimer + UPDATE_WEATHER_INTERVAL_MS < new Date().valueOf() || bypass) {
             let self = this;
             let url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + this.weatherInfo.coord.lat + '&lon=' + this.weatherInfo.coord.lon + '&appid=b5c73fdb1f1e82f68dd7ed28e90bb66c&units=metric';
+            self.logger.info("Running dailyWeatherUpdate");
             axios.get(url)
                 .then(function (response) {
                     // handle success
@@ -115,23 +122,29 @@ module.exports = class Application {
                     self.weatherInfo.sunrise = new Date(res.sys.sunrise * 1000).toLocaleTimeString('da-DK').slice(0, -3);
                     self.weatherInfo.sunset = new Date(res.sys.sunset * 1000).toLocaleTimeString('da-DK').slice(0, -3);
 
+                    self.logger.info("Success: dailyWeatherUpdate");
+                    self.sendUpdate("render", "weather::" + JSON.stringify(self.weatherInfo));
+
                 })
                 .catch(function (error) {
                     // handle error
-                    self.logger.error(error);
+                    self.logger.error("dailyWeatherUpdate: " + error);
                 })
                 .then(function () {
-                    self.time = new Date().valueOf();
+                    self.weatherTodayTimer = new Date().valueOf();
                     // always executed
                 });
+
+
         }
     }
 
-    weeklyWeatherUpdate(bypass = false) {
+    weeklyWeatherUpdate(bypass) {
         // - Get 5 days forecast
-        if (this.time + UPDATE_WEEKLY_WEATHER_INTERVAL_MS < new Date().valueOf() || bypass) {
+        if (this.weatherWeeklyTimer + UPDATE_WEEKLY_WEATHER_INTERVAL_MS < new Date().valueOf() || bypass) {
             let self = this;
             let url = "https://api.openweathermap.org/data/3.0/onecall";
+            self.logger.info("Running weeklyWeatherUpdate");
             let payload =
                 {
                     lat: self.weatherInfo.coord.lat,
@@ -168,26 +181,37 @@ module.exports = class Application {
                         })
                     }
 
+                    self.logger.info("Success: weeklyWeatherUpdate");
+                    self.sendUpdate("render", "weather::" + JSON.stringify(self.weatherInfo));
                 })
                 .catch(function (error) {
                     // handle error
-                    self.logger.error(error);
+                    self.logger.error("weeklyWeatherUpdate: " + error);
                 })
                 .then(function () {
-                    self.time = new Date().valueOf();
+                    self.weatherWeeklyTimer = new Date().valueOf();
                     // always executed
                 });
         }
     }
 
-    update() {
-        this.dailyWeatherUpdate()
-        this.weeklyWeatherUpdate()
-        this.sendUpdate("render", "weather::" + JSON.stringify(this.weatherInfo));
-
+    timeUpdate(bypass){
         // Set current time
-        let timeString = "time::" + new Date().toLocaleTimeString("en-us", {hour12: false}).slice(0, -3);
-        this.sendUpdate("render", timeString);
+        if (this.timeTimer + UPDATE_TIME_INTERVAL_MS < new Date().valueOf() || bypass) {
+
+            let timeString = "time::" + new Date().toLocaleTimeString("en-us", {hour12: false}).slice(0, -3);
+            this.sendUpdate("render", timeString);
+            this.timeTimer = new Date().valueOf();
+            this.logger.info("Success: timeUpdate");
+
+        }
+
+    }
+
+    update() {
+        this.dailyWeatherUpdate();
+        this.weeklyWeatherUpdate();
+        this.timeUpdate();
 
 
     }

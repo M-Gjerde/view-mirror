@@ -2,17 +2,11 @@ import CreateLayout from "./createLayout.js";
 
 
 
-//document.dispatchEvent(new Event('mousemove'));
-document.body.requestPointerLock();
-
-
 let layout = new CreateLayout();
-
-
 window.electronAPI.data((event, value) => {
-
-    if (value.split(":").length > 1) {
+    if (value.split("::").length > 1) {
         let key = value.split("::")[0];
+        console.log(key)
         let msg = value.replace(key + "::", "");
         switch (key) {
             case "time":
@@ -25,8 +19,8 @@ window.electronAPI.data((event, value) => {
                 console.log("Renderer did not accept key in msg from application")
                 break;
         }
+    } else {
+        console.log("Not a valid renderer data format: " + value)
     }
+
 })
-
-
-document.getElementById("weatherDiv").focus();
