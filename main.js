@@ -6,7 +6,6 @@ const path = require('path')
 const Application = require("./Application");
 const {Worker, isMainThread} = require('node:worker_threads');
 const {transports, createLogger, format} = require('winston');
-const {log} = require("winston");
 
 
 /** INITIALIZE LOGGER **/
@@ -44,7 +43,6 @@ if (process.env.NODE_ENV !== 'production') {
 if (!isMainThread){
     application = new Application(logger);
     try {
-        const {workerData, parentPort, isMainThread} = require("worker_threads");
         application.run();
     }
     catch (e) {
@@ -63,6 +61,8 @@ let windowHandler = null;
         // Create the browser window.
         const win = new BrowserWindow({
             //fullscreen: true,
+            width: 1280 * 1.3,
+            height: 720 * 1.3,
             autoHideMenuBar: true,
             disableAutoHideCursor: false,
             webPreferences: {

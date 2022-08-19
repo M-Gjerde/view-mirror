@@ -83,13 +83,18 @@ module.exports = class Application {
             this.timeUpdate(true);
             this.dailyWeatherUpdate(true);
             this.weeklyWeatherUpdate(true);
-        }, 2000);
+        }, 1000);
 
 
 
 
         this.running = true;
         this.logger.info("Worker initialized");
+
+        setTimeout(() => {
+            parentPort.postMessage("renderer::" + "fade::in");
+        }, 3000)
+
     }
 
     sendUpdate(dst, msg) {
@@ -120,7 +125,7 @@ module.exports = class Application {
                     self.weatherInfo.feelsLike = Math.round(res.main.feels_like)  + "\u00B0";
                     self.weatherInfo.icon = res.weather[0].icon;
 
-                    // Convert to human readable dates
+                    // Convert to human-readable dates
                     // Multiply by 1000 because seconds is returned by openweather API and Date object takes milliseconds.
                     // Convert to local time using toLocalteTimeString. Remove last three characters to omit seconds.
                     self.weatherInfo.sunrise = new Date(res.sys.sunrise * 1000).toLocaleTimeString('da-DK').slice(0, -3);
@@ -167,7 +172,7 @@ module.exports = class Application {
                     for (let i = 0; i < res.daily.length; i++) {
                         let obj = res.daily[i];
                         let date = new Date(res.daily[i].dt * 1000).toDateString();
-                        // Skip today cause we dont need it.
+                        // Skip today because we don't need it.
                         if (date === new Date().toDateString()) {
                             continue;
                         }
