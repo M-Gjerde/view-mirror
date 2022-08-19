@@ -50,6 +50,7 @@ module.exports = class Application {
                     try {
                         app.update()
                     } catch (e) {
+                        console.log("CONSOLEEE:" + e);
                         t = 0;
                         app.logger.error("Update loop error: " + e.toString());
                     }
@@ -74,14 +75,17 @@ module.exports = class Application {
         parentPort.postMessage({start: workerData, isMainThread});
 
 
-
         // Prepare render loop and set update interval
         this.interval(this.update, UPDATE_LOOP_INTERVAL_MS);
 
-        this.dailyWeatherUpdate(true);
-        this.weeklyWeatherUpdate(true);
 
-        this.timeUpdate(true);
+        setTimeout(() => {
+            this.timeUpdate(true);
+            this.dailyWeatherUpdate(true);
+            this.weeklyWeatherUpdate(true);
+        }, 2000);
+
+
 
 
         this.running = true;

@@ -41,10 +41,22 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 
+if (!isMainThread){
+    application = new Application(logger);
+    try {
+        const {workerData, parentPort, isMainThread} = require("worker_threads");
+        application.run();
+    }
+    catch (e) {
+        application.logger.error("Error:" , e);
+        //console.log(e);
+    }
+    return;
+}
+
 /** INITIALIZE BACKEND **/
 /** INITIALIZE WORKER THREAD FOR BACKEND TASKS **/
 let windowHandler = null;
-if (isMainThread) {
     // This re-loads the current file inside a Worker instance.
     /** INITIALIZE WINDOW AND RENDERER **/
     const createWindow = () => {
@@ -127,8 +139,9 @@ if (isMainThread) {
     });
 
     worker.on("error", code => {
-        new Error(`Worker error with exit code ${code}`);
-        logger.error(`Worker error with exit code ${code}`);
+        console.log("CODE: "  + code);
+        const err = new Error(`Worker error with exit code ${code}`);
+        logger.error(`Worker error with exit code ${code} ${err.stack}`);
     });
     worker.on("exit", code => {
             console.log(`Worker stopped with exit code ${code}`)
@@ -138,8 +151,4 @@ if (isMainThread) {
 
     logger.info("Initialized worker");
 
-} else {
-    application = new Application(logger);
-    application.run();
-    return;
-}
+
