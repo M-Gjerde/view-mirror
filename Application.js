@@ -1,11 +1,13 @@
 const {workerData, parentPort, isMainThread} = require("worker_threads");
 const axios = require('axios').default;
+const fs = require('fs');
+const net = require('net');
 
 const UPDATE_LOOP_INTERVAL_MS = 1000;
 const UPDATE_WEATHER_INTERVAL_MS = 1000 * 60;
 const UPDATE_WEEKLY_WEATHER_INTERVAL_MS = 1000 * 3600;
 const UPDATE_TIME_INTERVAL_MS = 1000 * 30;
-
+let pipe = 0;
 module.exports = class Application {
     constructor(logger) {
         this.logger = logger;
@@ -94,6 +96,30 @@ module.exports = class Application {
         setTimeout(() => {
             parentPort.postMessage("renderer::" + "fade::in");
         }, 3000)
+
+
+
+        fs.open('/home/magnus/CLionProjects/view_spotify_player/cmake-build-debug/fifo.tmp', fs.constants.O_RDONLY | fs.constants.O_NONBLOCK, this.spotifyCallback);
+    }
+
+
+
+    spotifyCallback(err, fd){
+            // Handle err
+            console.log("____________________");
+            console.log(err);
+
+            pipe = new net.Socket({ fd });
+            // Now `pipe` is a stream that can be used for reading from the FIFO.
+            pipe.on('data', (data) => {
+                console.log("______________________________________________________");
+                let str = data.toString();
+                console.log(str);
+            });
+            pipe.on("connect", ()=>{
+                console.log("************");
+                console.log("Connected");
+            });
 
     }
 
